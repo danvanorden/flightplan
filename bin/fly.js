@@ -63,7 +63,7 @@ if(target && target.indexOf(':') !== -1) {
 }
 
 var cli = new Liftoff({
-  name: 'flightplan',
+  name: cliPackage.name,
   processTitle: 'Flightplan',
   configName: 'flightplan',
   extensions: interpret.jsVariants,
@@ -76,7 +76,6 @@ cli.on('requireFail', function(name) {
 });
 
 var invoke = function(env) {
-
   if(!env.configPath) {
     process.stderr.write(format('Error: %s not found\n', (options.flightplan || 'flightplan.js')));
     process.exit(1);
@@ -87,8 +86,8 @@ var invoke = function(env) {
     process.exit(1);
   }
 
-  if(!semver.satisfies(env.modulePackage.version, '>=0.5.0')) {
-    process.stderr.write('Error: local flightplan package version should be >=0.5.0\n');
+  if(!semver.satisfies(env.modulePackage.version, '>=0.7.0')) {
+    process.stderr.write('Error: local flightplan package version should be >=0.7.0\n');
     process.exit(1);
   }
 
