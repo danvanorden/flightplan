@@ -26,6 +26,8 @@ $ fly [task:]<target> [--flightplan flightplan.(js|coffee)]
 
 By default, the `fly` command will try to load `flightplan.js` or `flightplan.coffee`.
 
+*For Windows users: install [cwRsync](https://itefix.net/cwrsync) and add it to PATH environment var.*
+
 ## Sample flightplan.js
 
 ```javascript
@@ -62,7 +64,7 @@ plan.local(function(local) {
   local.log('Copy files to remote hosts');
   var filesToCopy = local.exec('git ls-files', {silent: true});
   // rsync files to all the target's remote hosts
-  local.transfer(filesToCopy, '/tmp/' + tmpDir);
+  local.transferFiles(filesToCopy, '/tmp/' + tmpDir);
 });
 
 // run commands on the target's remote hosts
@@ -496,7 +498,40 @@ www:x:1002:1002::/home/www:/bin/bash   # GOOD
 www:x:1002:1002::/home/www:/bin/false  # BAD
 ```
 
-### transport.transfer(files, remoteDir[, options]) → [results]
+### transport.transfer(localDir, remoteDir[, options]) → [results]
+
+Copy local directory to the current target's remote host(s) using
+`rsync` with the SSH protocol. File transfers are executed in parallel.
+ After finishing all transfers, an array containing results from
+`transport.exec()` is returned. This method is only available on local
+flights.
+
+```javascript
+local.transfer('./', '/tmp/foo', {
+  exclude: 'node_modules\n.*',
+  rsyncFlags: '-avzc -P --chmod=Dugo+x,ugo+r,a=rw,Da+x --delete-after --no-g --no-o'
+});
+```
+
+`transfer()` will use the current host's username defined with
+`target()` unless `fly` is called with the `-u|--username` option.
+In this case the latter will be used. If debugging is enabled
+(either with `target()` or with `fly --debug`), `rsync` is executed
+in verbose mode (`-vv`).
+
+#### Options argument
+
+Additional options for `rsync`:
+
+- **excludeFrom**: String - filename for rsync `--exclude-from` argument.
+  Ignored if "exclude" option used.
+- **exclude**: String|Array<String> - list of files to exclude.
+- **filesFrom**: String|Array<String> - list of files to sync for rsync
+  `--files-from` argument. Ignored if "files" option used.
+- **files**: String|Array<String> - list of files to sync.
+- **rsyncFlags**: String - additional rsync arguments.
+
+### transport.transferFiles(files, remoteDir[, options]) → [results]
 
 Copy a list of files to the current target's remote host(s) using
 `rsync` with the SSH protocol. File transfers are executed in parallel.
@@ -506,7 +541,7 @@ flights.
 
 ```javascript
 var files = ['path/to/file1', 'path/to/file2'];
-local.transfer(files, '/tmp/foo');
+local.transferFiles(files, '/tmp/foo');
 ```
 
 #### Files argument
@@ -517,21 +552,21 @@ strings are handled as well:
 ```javascript
 // use result from a previous command
 var files = local.git('ls-files', {silent: true}); // get list of files under version control
-local.transfer(files, '/tmp/foo');
+local.transferFiles(files, '/tmp/foo');
 
 // use zero-terminated result from a previous command
 var files = local.exec('(git ls-files -z;find node_modules -type f -print0)', {silent: true});
-local.transfer(files, '/tmp/foo');
+local.transferFiles(files, '/tmp/foo');
 
 // use results from multiple commands
 var result1 = local.git('ls-files', {silent: true}).stdout.split('\n');
 var result2 = local.find('node_modules -type f', {silent: true}).stdout.split('\n');
 var files = result1.concat(result2);
 files.push('path/to/another/file');
-local.transfer(files, '/tmp/foo');
+local.transferFiles(files, '/tmp/foo');
 ```
 
-`transfer()` will use the current host's username defined with
+`transferFiles()` will use the current host's username defined with
 `target()` unless `fly` is called with the `-u|--username` option.
 In this case the latter will be used. If debugging is enabled
 (either with `target()` or with `fly --debug`), `rsync` is executed

@@ -29,7 +29,7 @@ var COMMAND_OPTIONS = {
 };
 
 var LOG_METHODS = ['user', 'info', 'success', 'warn', 'error', 'command',
-                    'stdout', 'stdwarn', 'stderr', 'debug'];
+  'stdout', 'stdwarn', 'stderr', 'debug'];
 
 var INTERACTIVE_PROMPTS = [
   {

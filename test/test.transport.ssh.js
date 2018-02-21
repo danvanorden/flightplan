@@ -331,7 +331,7 @@ describe('transport/ssh', function() {
           SSH2_EXEC_STUB.lastCall.args[2](null, SSH2_EXEC_STREAM_MOCK);
 
           SSH2_EXEC_STREAM_MOCK.stderr.on.withArgs('data').firstCall.args[1]('not found\n');
-           // byline mock
+          // byline mock
           SSH2_EXEC_STREAM_MOCK.stderr.on.withArgs('data').lastCall.args[1]('not found\n');
           SSH2_EXEC_STREAM_MOCK.on.withArgs('exit').lastCall.args[1](127);
           SSH2_EXEC_STREAM_MOCK.on.withArgs('end').lastCall.args[1]();
