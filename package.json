@@ -1,7 +1,7 @@
 {
-  "name": "@druide/flightplan",
+  "name": "@idearoom/flightplan",
   "description": "Library for streamlining application deployment or systems administration tasks",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "author": "Patrick Stadler <patrick.stadler@gmail.com>",
   "keywords": [
     "deploy",
@@ -21,13 +21,13 @@
     "fabric"
   ],
   "readmeFilename": "README.md",
-  "homepage": "https://github.com/druide/flightplan",
+  "homepage": "https://github.com/danvanorden/flightplan",
   "repository": {
     "type": "git",
-    "url": "https://github.com/druide/flightplan"
+    "url": "https://github.com/danvanorden/flightplan"
   },
   "bugs": {
-    "url": "https://github.com/druide/flightplan/issues"
+    "url": "https://github.com/danvanorden/flightplan/issues"
   },
   "bin": {
     "fly": "./bin/fly.js"
